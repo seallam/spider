@@ -5,12 +5,12 @@ import requests
 from bs4 import BeautifulSoup
 
 from database.mysql.entity.proxy_ip import ProxyIp
-from proxy_ip_crawler.ip_crawler import IpCrawler
+from proxy_ip_crawler.crawler.ip_crawler import IpCrawler
 
 
 class Goubanjia(IpCrawler):
 	def get_proxy_list(self):
-		print("goubanjia代理ip爬取开始")
+		print('即将执行%s代理ip获取' % self.name)
 		gw_proxy_url = 'http://www.goubanjia.com/free/gwgn/index%s.shtml'
 		gn_proxy_url = 'http://www.goubanjia.com/free/gngn/index%s.shtml'
 		header = {

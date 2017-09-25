@@ -1,4 +1,4 @@
-from proxy_ip_crawler.ip_crawler import IpCrawler
+from proxy_ip_crawler.crawler.ip_crawler import IpCrawler
 
 
 class Mayidaili(IpCrawler):

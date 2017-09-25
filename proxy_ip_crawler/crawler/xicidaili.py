@@ -6,13 +6,13 @@ from bs4 import BeautifulSoup
 from lxml import etree
 
 from database.mysql.entity.proxy_ip import ProxyIp
-from proxy_ip_crawler.ip_crawler import IpCrawler
+from proxy_ip_crawler.crawler.ip_crawler import IpCrawler
 
 
 class Xicidaili(IpCrawler):
 
 	def get_proxy_list(self):
-		print('即将执行西刺代理ip获取')
+		print('即将执行%s代理ip获取' % self.name)
 		# requests的Session可以自动保持cookie,不需要自己维护cookie内容
 		session = requests.Session()
 

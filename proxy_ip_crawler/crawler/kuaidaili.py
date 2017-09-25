@@ -4,12 +4,12 @@ from datetime import datetime
 from selenium import webdriver
 
 from database.mysql.entity.proxy_ip import ProxyIp
-from proxy_ip_crawler.ip_crawler import IpCrawler
+from proxy_ip_crawler.crawler.ip_crawler import IpCrawler
 
 
 class Kuaidaili(IpCrawler):
 	def get_proxy_list(self):
-		print('即将执行快代理ip获取')
+		print('即将执行%s代理ip获取' % self.name)
 		# proxy_url = "http://ent.kuaidaili.com/api/getproxy/?orderid=990037345175795&num=500&b_pcchrome=1&b_pcie=1&b_pcff=1&protocol=1&method=2&an_ha=1&sp1=1&sp2=1&sep=1"
 		#
 		# response = requests.request("GET", url=proxy_url)
