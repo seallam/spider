@@ -2,8 +2,9 @@ import time
 from datetime import datetime
 
 from selenium import webdriver
+
+from database.mysql.entity.proxy_ip import ProxyIp
 from proxy_ip_crawler.ip_crawler import IpCrawler
-from proxy_ip_crawler.module.proxy_ip import ProxyIp
 
 
 class Kuaidaili(IpCrawler):

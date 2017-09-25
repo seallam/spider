@@ -1,12 +1,12 @@
+import time
 from datetime import datetime
 
-import time
 from sqlalchemy import and_
 
-from database.MySQLDBSession import DBSession
+from database.mysql.MySQLDBSession import DBSession
+from database.mysql.entity.proxy_ip import ProxyIp
 from proxy_ip_crawler.check_ip import initpattern, check_ip
 from proxy_ip_crawler.fetch_area_info import fetch_area_info
-from proxy_ip_crawler.module.proxy_ip import ProxyIp
 
 
 class IpCrawler(object):

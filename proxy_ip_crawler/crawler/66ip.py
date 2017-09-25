@@ -1,12 +1,12 @@
-from datetime import datetime
 import time
-from lxml import etree
+from datetime import datetime
 
 import requests
 from bs4 import BeautifulSoup
+from lxml import etree
 
+from database.mysql.entity.proxy_ip import ProxyIp
 from proxy_ip_crawler.ip_crawler import IpCrawler
-from proxy_ip_crawler.module.proxy_ip import ProxyIp
 
 
 class IP66(IpCrawler):

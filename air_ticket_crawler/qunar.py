@@ -1,5 +1,5 @@
-from database.MySQLDBSession import DBSession
-from proxy_ip_crawler.module.proxy_ip import ProxyIp
+from database.mysql.MySQLDBSession import DBSession
+from database.mysql.entity.proxy_ip import ProxyIp
 from tools.proxy_pre_heat import pre_heat
 
 # 预热ip

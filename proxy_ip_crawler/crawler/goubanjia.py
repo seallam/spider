@@ -1,9 +1,11 @@
 import time
 from datetime import datetime
+
 import requests
 from bs4 import BeautifulSoup
+
+from database.mysql.entity.proxy_ip import ProxyIp
 from proxy_ip_crawler.ip_crawler import IpCrawler
-from proxy_ip_crawler.module.proxy_ip import ProxyIp
 
 
 class Goubanjia(IpCrawler):
@@ -31,22 +33,23 @@ class Goubanjia(IpCrawler):
 				ip_list = bf2_ip_list.find_all('tr')
 
 				for index in range(1, len(ip_list)):
-					visible = ip_list[index].find_all('td')[1].text
-					if visible == '高匿':
-						ip_port = ip_list[index].find_all('td')[0].text.replace('..', '.')
-						ip_port = ip_port.split(':')
-						ip = ip_port[0]
-						port = ip_port[1]
-						protocol = ip_list[index].find_all('td')[2].text
-						if protocol.lower() == 'https':
-							_type = 2
-						elif protocol.lower() == 'http':
-							_type = 1
-						else:
-							_type = 3
-						# print('ip为[%s], 端口为:%s, %s, http协议为:%s' % (ip, port, visible, protocol))
-						proxy_ip = ProxyIp(ip=ip, port=port, _type=_type, source=proxy_url, is_alive=1, create_time=datetime.now(), update_time=datetime.now())
-						proxy_list.append(proxy_ip)
+					if len(ip_list[index].find_all('td')) > 2:
+						visible = ip_list[index].find_all('td')[1].text
+						if visible == '高匿':
+							ip_port = ip_list[index].find_all('td')[0].text.replace('..', '.')
+							ip_port = ip_port.split(':')
+							ip = ip_port[0]
+							port = ip_port[1]
+							protocol = ip_list[index].find_all('td')[2].text
+							if protocol.lower() == 'https':
+								_type = 2
+							elif protocol.lower() == 'http':
+								_type = 1
+							else:
+								_type = 3
+							# print('ip为[%s], 端口为:%s, %s, http协议为:%s' % (ip, port, visible, protocol))
+							proxy_ip = ProxyIp(ip=ip, port=port, _type=_type, source=proxy_url, is_alive=1, create_time=datetime.now(), update_time=datetime.now())
+							proxy_list.append(proxy_ip)
 				time.sleep(2)
 
 

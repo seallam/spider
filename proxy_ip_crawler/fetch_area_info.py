@@ -3,8 +3,8 @@ import json
 import requests
 from sqlalchemy import func
 
-from database.MySQLDBSession import DBSession
-from proxy_ip_crawler.module.proxy_ip import ProxyIp
+from database.mysql.MySQLDBSession import DBSession
+from database.mysql.entity.proxy_ip import ProxyIp
 
 
 def fetch_area_info(proxy_ip, db):
