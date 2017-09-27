@@ -25,7 +25,6 @@ class IpCrawler(object):
 		print("获取%sip结束,即将执行入库,共有%s条数据,即将执行入库" % (self.name, len(proxy_list)))
 		db = DBSession().get_session()
 		add_list = []
-		score_list = []
 		start_time = time.time()
 		for proxy_ip in proxy_list:
 			# 检查ip
@@ -49,7 +48,7 @@ class IpCrawler(object):
 					if proxy_ip.score is None:
 						proxy_ip.score = 0
 					proxy_ip.score -= 1
-					score_list.append(proxy_ip)
+					proxy_ip.resp_time = resp_time
 			db.commit()
 
 		end_time = time.time()
