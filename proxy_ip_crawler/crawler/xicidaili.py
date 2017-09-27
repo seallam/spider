@@ -90,6 +90,7 @@ if __name__ == '__main__':
 	# print(datetime.datetime.timestamp(proxy_ip.create_time))
 	# print(time.time())
 	# print(datetime.datetime.now())
+	time.sleep(60 * 25)
 	while True:
 		xici = Xicidaili('西刺代理')
 		proxy_ip_list = xici.get_proxy_list()

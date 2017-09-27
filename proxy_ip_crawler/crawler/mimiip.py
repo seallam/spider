@@ -39,6 +39,7 @@ class Mimiip(IpCrawler):
 
 
 if __name__ == '__main__':
+	time.sleep(60 * 20)
 	while True:
 		mimiip = Mimiip('秘密代理')
 		proxy_ip_list = mimiip.get_proxy_list()

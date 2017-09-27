@@ -1,7 +1,6 @@
 import re
 import subprocess as sp
 
-
 """
 函数说明:检查代理IP的连通性
 Parameters:
@@ -65,4 +64,3 @@ def initpattern():
 	# 匹配平均时间
 	waste_time = re.compile(u"平均 = (\d+)ms", re.IGNORECASE)
 	return lose_time, waste_time
-

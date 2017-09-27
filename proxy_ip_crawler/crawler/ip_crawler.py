@@ -24,16 +24,48 @@ class IpCrawler(object):
 		lose_time, waste_time = initpattern()
 		print("获取%sip结束,即将执行入库,共有%s条数据,即将执行入库" % (self.name, len(proxy_list)))
 		db = DBSession().get_session()
+		add_list = []
+		score_list = []
+		start_time = time.time()
 		for proxy_ip in proxy_list:
 			# 检查ip
-			if check_ip(proxy_ip.ip, lose_time, waste_time) < 200:
-				res = db.query(ProxyIp).filter(and_(ProxyIp.ip == proxy_ip.ip, ProxyIp.port == proxy_ip.port))
-				if len(res.all()) == 0:  # 数据库不存在时,直接插入
+			resp_time = check_ip(proxy_ip.ip, lose_time, waste_time)
+			result = db.query(ProxyIp).filter(and_(ProxyIp.ip == proxy_ip.ip, ProxyIp.port == proxy_ip.port)).first()
+			if result is None:  # 数据库不存在时,直接插入
+				if resp_time < 2000:
 					proxy_ip = fetch_area_info(proxy_ip)
-					db.add(proxy_ip)
-				else:  # 数据库中已有该记录,更新存活时间
-					proxy_ip = res.all()[0]
+					if proxy_ip is not None:
+						proxy_ip.resp_time = resp_time
+						# db.add(proxy_ip)
+						add_list.append(proxy_ip)
+					# db.commit()
+			else:  # proxy_ip is not None and resp_time < 2000:  # 数据库中已有该记录,更新存活时间
+				proxy_ip = result
+				if resp_time < 2000:
 					create_timestamp = datetime.timestamp(proxy_ip.create_time)
 					proxy_ip.alive_time = time.time() - create_timestamp
-		db.commit()
+					proxy_ip.resp_time = resp_time
+				else:  # resp_time >= 2000:数据库中存在记录并且超时的,score-1
+					if proxy_ip.score is None:
+						proxy_ip.score = 0
+					proxy_ip.score -= 1
+					score_list.append(proxy_ip)
+			db.commit()
 
+		end_time = time.time()
+		exec_time = end_time - start_time
+		print('%s代理IP查询结束,查询%s条数据耗时%s秒' % (self.name, len(proxy_list), exec_time))
+
+		# for add_ip in add_list:
+		# 	db.add(add_ip)
+		# db.flush()
+		start_time = time.time()
+		db.bulk_save_objects(add_list)
+		db.commit()
+		# for update_ip in update_list:
+		# 	create_timestamp = datetime.timestamp(update_ip.create_time)
+		# 	update_ip.alive_time = time.time() - create_timestamp
+		# db.commit()
+		end_time = time.time()
+		exec_time = end_time - start_time
+		print('%s代理IP入库结束,共入库%s个IP,耗时%s秒' % (self.name, len(add_list), exec_time))

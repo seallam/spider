@@ -25,15 +25,16 @@ def fetch_area_info(proxy_ip, db):
 def fetch_area_info(proxy_ip):
 	fetch_url = f'http://ip.taobao.com/service/getIpInfo.php?ip={proxy_ip.ip}'
 	response = requests.request('GET', fetch_url)
-	result = json.loads(response.text)
-	if result['code'] == 0:
-		proxy_ip.country = result['data']['country']
-		proxy_ip.country_code = result['data']['country_id']
-		proxy_ip.province = result['data']['region']
-		proxy_ip.province_code = result['data']['region_id']
-		proxy_ip.city = result['data']['city']
-		proxy_ip.city_code = result['data']['city_id']
-		return proxy_ip
+	if response.status_code == 200:
+		result = json.loads(response.text)
+		if result['code'] == 0:
+			proxy_ip.country = result['data']['country']
+			proxy_ip.country_code = result['data']['country_id']
+			proxy_ip.province = result['data']['region']
+			proxy_ip.province_code = result['data']['region_id']
+			proxy_ip.city = result['data']['city']
+			proxy_ip.city_code = result['data']['city_id']
+			return proxy_ip
 
 
 if __name__ == '__main__':

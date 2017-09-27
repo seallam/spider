@@ -29,7 +29,7 @@ class Kuaidaili(IpCrawler):
 		proxy_list = []
 		for i in range(1, 5):
 			browser.get(proxy_url + str(i))
-			browser.implicitly_wait(3)
+			browser.implicitly_wait(10)
 			elements = browser.find_elements_by_xpath('//tbody/tr')  # 找到每个代理的位置
 			for element in elements:
 				ip = element.find_element_by_xpath('./td[1]').text
@@ -45,7 +45,7 @@ class Kuaidaili(IpCrawler):
 					_type = 3
 				proxy_ip = ProxyIp(ip=ip, port=port, _type=_type, source='http://www.kuaidaili.com/', is_alive=1, create_time=datetime.now(), update_time=datetime.now())
 				proxy_list.append(proxy_ip)
-		time.sleep(5)
+		time.sleep(15)
 		browser.quit()
 		return proxy_list
 
@@ -76,6 +76,7 @@ class Kuaidaili(IpCrawler):
 
 
 if __name__ == '__main__':
+	time.sleep(60 * 15)
 	while True:
 		kuai = Kuaidaili('快代理')
 		proxy_ip_list = kuai.get_proxy_list()

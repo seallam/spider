@@ -11,20 +11,19 @@ from proxy_ip_crawler.crawler.ip_crawler import IpCrawler
 class Goubanjia(IpCrawler):
 	def get_proxy_list(self):
 		print('即将执行%s代理ip获取' % self.name)
-		gw_proxy_url = 'http://www.goubanjia.com/free/gwgn/index%s.shtml'
-		gn_proxy_url = 'http://www.goubanjia.com/free/gngn/index%s.shtml'
+		proxy_url = 'http://www.goubanjia.com/'
 		header = {
 			'cache-control': "no-cache",
 			'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36'
 		}
 		proxy_list = []
-		self.get_proxy_ip(header, proxy_list, gw_proxy_url)
-		self.get_proxy_ip(header, proxy_list, gn_proxy_url)
+		self.get_proxy_ip(header, proxy_list, proxy_url, 'free/gwgn/index%s.shtml')
+		self.get_proxy_ip(header, proxy_list, proxy_url, 'free/gngn/index%s.shtml')
 		return proxy_list
 
-	def get_proxy_ip(self, header, proxy_list, proxy_url):
+	def get_proxy_ip(self, header, proxy_list, proxy_url, ext_url):
 		for i in range(1, 3):
-			response = requests.request('GET', proxy_url % str(i), headers=header)
+			response = requests.request('GET', proxy_url + ext_url % str(i), headers=header)
 			if response.status_code == 200:
 				html = response.text
 				# 获取id为ip_list的table
@@ -54,6 +53,7 @@ class Goubanjia(IpCrawler):
 
 
 if __name__ == '__main__':
+	time.sleep(60 * 10)
 	while True:
 		goubanjia = Goubanjia('goubanjia')
 		proxy_ip_list = goubanjia.get_proxy_list()

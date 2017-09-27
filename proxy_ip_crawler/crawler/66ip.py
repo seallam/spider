@@ -34,6 +34,7 @@ class IP66(IpCrawler):
 
 
 if __name__ == '__main__':
+	time.sleep(60 * 5)
 	while True:
 		ip66 = IP66('66免费代理')
 		proxy_ip_list = ip66.get_proxy_list()
