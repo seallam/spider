@@ -6,28 +6,38 @@ from bs4 import BeautifulSoup
 
 from database.mysql.entity.proxy_ip import ProxyIp
 from proxy_ip_crawler.crawler.ip_crawler import IpCrawler
-from tools.proxy_pre_heat import PreheatUtils
+from src.main.python.tools.proxy_pre_heat import PreheatUtils
 
 
 class Mimiip(IpCrawler):
 	def get_proxy_list(self):
 		print('即将执行%s代理ip获取' % self.name)
 		proxy_url = 'http://www.mimiip.com/'
+		header = {
+			'cache-control': "no-cache",
+			'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36'
+		}
 		preheat = PreheatUtils(proxy_url)
 		proxies = preheat.get_proxy_ip()
 		proxy_list = []
 		flag = False
 		for i in range(1, 3):
-			response = requests.get(url=(proxy_url + 'gngao/%s') % str(i), proxies=proxies)
+			response = requests.get(url=(proxy_url + 'gngao/%s') % str(i), proxies=proxies, headers=header)
 			html = response.text
 			if 'block' in html:
+				print('第%s页数据被block' % i)
 				flag = True
 			while flag:
 				proxies = preheat.get_proxy_ip()
-				response = requests.get(url=(proxy_url + 'gngao/%s') % str(i), proxies=proxies)
-				html = response.text
-				if 'block' not in html:
-					flag = False
+				try:
+					response = requests.get(url=(proxy_url + 'gngao/%s') % str(i), proxies=proxies, headers=header)
+				except:
+					print('%s get error' % self.name)
+				if response.status_code == 200:
+					html = response.text
+					if 'block' not in html:
+						print('获取网页内容成功')
+						flag = False
 
 			soup = BeautifulSoup(html, 'lxml')
 			bf2_ip_list = BeautifulSoup(str(soup.find_all('table')), 'lxml')

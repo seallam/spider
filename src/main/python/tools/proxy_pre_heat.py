@@ -13,12 +13,14 @@ from database.redis.RedisDB import RedisDB
 class PreheatUtils(object):
 	redis = None
 	url = None
+	num = None
 
-	def __init__(self, url):
+	def __init__(self, url, num=50):
 		self.redis = RedisDB().get_redis()
 		self.url = url
+		self.num = num
 
-	def pre_heat(self, num=50):
+	def pre_heat(self):
 		print('即将预热网站%s' % self.url)
 		host = self.get_host()
 		success_ip = []
@@ -66,35 +68,36 @@ class PreheatUtils(object):
 						"prototype": prototype
 					}
 					self.redis.zadd(host, json.dumps(obj), time.time())
+					print('%s保存成功,现有[%s/%s]个IP' % (proxy_ip.to_json(), self.redis.zcard(host), str(self.num)))
 				else:  # 获取网页内容失败(超时等)
 					print(response.status_code)
 					proxy_ip.score = proxy_ip.score - 1
 			except:
 				proxy_ip.score = score - 1
+			mysql.commit()
 			count += 1
-			if self.redis.zcard(host) >= num or count >= 1500:  # 预热得到足够的数据后跳出循环
+			if self.redis.zcard(host) >= self.num or count >= 1500:  # 预热得到足够的数据后跳出循环
 				print('网站%s预热结束,即将返回结果' % self.url)
 				flag = False
 
-		mysql.commit()
 		self.redis.expire(host, 60 * 60 * 24 * 2)  # 数据保存2天
 		return success_ip
 
 	def get_host(self):
 		return str(self.url).replace('http', '').replace('https', '').replace('://', '').replace('/', '')
 
-	def get_proxy(self, url):
-		host = self.get_host(url)
+	def get_proxy(self):
+		host = self.get_host()
 		zcount = self.redis.zcard(host)
 		if zcount > 0:
 			return self.redis.zrange(host, 0, zcount)
 		else:
-			self.pre_heat(url)
+			self.pre_heat()
 			zcount = self.redis.zcard(host)
 			return self.redis.zrange(host, 0, zcount)
 
 	def get_proxy_ip(self):
-		zcount = self.redis.zcard(self.get_host(self.url))
+		zcount = self.redis.zcard(self.get_host())
 		zset = self.redis.zrange('flights.ctrip.com', 0, zcount)
 		ip_json = json.loads(zset[random.randint(0, zcount)])
 		proxy_str = '%s://%s:%s' % (ip_json['prototype'], ip_json['ip'], ip_json['port'])

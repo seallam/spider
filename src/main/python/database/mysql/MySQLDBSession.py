@@ -18,4 +18,5 @@ class DBSession:
 		self.session.close()
 
 	def __del__(self):
-		self.session.close()
+		if self.session is not None:
+			self.session.close()

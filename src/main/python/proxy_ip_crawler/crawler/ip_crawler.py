@@ -59,8 +59,11 @@ class IpCrawler(object):
 		# 	db.add(add_ip)
 		# db.flush()
 		start_time = time.time()
-		db.bulk_save_objects(add_list)
-		db.commit()
+		try:
+			db.bulk_save_objects(add_list)
+			db.commit()
+		except:
+			print('batch insert error')
 		# for update_ip in update_list:
 		# 	create_timestamp = datetime.timestamp(update_ip.create_time)
 		# 	update_ip.alive_time = time.time() - create_timestamp

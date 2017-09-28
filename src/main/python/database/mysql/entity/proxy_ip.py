@@ -48,8 +48,8 @@ class ProxyIp(Base):
 		self.create_time = create_time
 		self.update_time = update_time
 
-	# def __repr__(self):
-	# 	return "<ProxyIp('%s','%s','%s')>" % (self.id, self.ip, self.port)
+	def __repr__(self):
+		return self.to_json()
 
 	def _gen_tuple(self):
 		def convert_datetime(value):
